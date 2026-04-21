@@ -1,0 +1,12 @@
+{
+  "name": "lab6-sistecweb",
+  "version": "1.0.0",
+  "description": "Laboratorio 6 de Sistemas y Tecnologias Web: servidor Node corregido.",
+  "type": "module",
+  "scripts": {
+    "start": "node servidor.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
