@@ -104,7 +104,9 @@ El resultado fue:
 
 - `/` respondió `200 OK` y mostró `Servidor activo`.
 - `/info` respondió `200 OK` y devolvió JSON con mensaje, curso y tecnología.
+- `/saludo` respondió `200 OK` y mostró `Hola desde el servidor Node.js`.
 - `/api/student` respondió `200 OK` y devolvió JSON desde `datos.json`.
+- `/api/status` respondió `200 OK` y devolvió JSON con `ok`, `status` y `puerto`.
 - `/no-existe` respondió `404 Not Found` y mostró `Ruta no encontrada: /no-existe`.
 
 ## Parte 2
