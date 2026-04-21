@@ -1,2 +1,110 @@
 # Lab6-SisTecWeb
-NodeJS, inicializacion de api
+
+Laboratorio de Node.js para Sistemas y Tecnologías Web.
+
+## Qué se hizo en la Parte 1
+
+Se tomó el servidor malo que venía en `docs/servidor-malo (1).js` y se dejó una versión corregida en `servidor.js`.
+
+El objetivo fue que las rutas originales funcionaran bien:
+
+- `/`
+- `/info`
+- `/api/student`
+- cualquier ruta que no exista
+
+## Cambios realizados
+
+### 1. Se corrigió el cierre del servidor
+
+El archivo original no cerraba bien la función de `http.createServer`. Por eso Node no podía levantar el servidor.
+
+Ahora el servidor sí arranca correctamente con:
+
+```bash
+npm start
+```
+
+### 2. Se corrigió el tipo de respuesta de `/info`
+
+El código tenía `application-json`, pero eso no es el tipo correcto.
+
+Como esta ruta responde texto, se dejó como:
+
+```txt
+text/plain; charset=utf-8
+```
+
+### 3. Se corrigió la lectura de `datos.json`
+
+El código original llamaba `fs.readFile`, pero no esperaba el resultado con `await`. Eso hacía que la ruta `/api/student` devolviera algo incorrecto.
+
+Ahora sí lee el archivo, convierte el texto a JSON y responde datos reales.
+
+### 4. Se agregó `datos.json`
+
+La ruta `/api/student` necesitaba un archivo de datos. Se agregó `datos.json` con información simple para probar la API.
+
+### 5. Se corrigió la ruta no encontrada
+
+Antes cualquier ruta desconocida respondía con código `200`, aunque no existiera.
+
+Ahora responde con código `404`, que es lo correcto para una ruta no encontrada.
+
+## Cómo correrlo
+
+```bash
+npm start
+```
+
+El servidor queda en:
+
+```txt
+http://localhost:3000
+```
+
+## Cómo comprobarlo desde un cliente
+
+Con el servidor encendido, se puede probar así:
+
+```bash
+curl -i http://localhost:3000/
+curl -i http://localhost:3000/info
+curl -i http://localhost:3000/api/student
+curl -i http://localhost:3000/no-existe
+```
+
+## Resultado esperado
+
+`/` responde:
+
+```txt
+Servidor activo
+```
+
+`/info` responde:
+
+```txt
+Ruta de informacion
+```
+
+`/api/student` responde un JSON con los datos del archivo `datos.json`.
+
+Una ruta que no existe responde:
+
+```txt
+Ruta no encontrada
+```
+
+y usa el código HTTP `404`.
+
+## Pruebas realizadas
+
+Después de levantar el servidor con `npm start`, se probó desde `curl`.
+
+El resultado fue:
+
+- `/` respondió `200 OK` y mostró `Servidor activo`.
+- `/info` respondió `200 OK` y mostró `Ruta de informacion`.
+- `/api/student` respondió `200 OK` y devolvió JSON desde `datos.json`.
+- `/no-existe` respondió `404 Not Found` y mostró `Ruta no encontrada`.
