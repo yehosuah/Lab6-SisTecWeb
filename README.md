@@ -29,11 +29,7 @@ npm start
 
 El código tenía `application-json`, pero eso no es el tipo correcto.
 
-Como esta ruta responde texto, se dejó como:
-
-```txt
-text/plain; charset=utf-8
-```
+En la Parte 1 se corrigió el encabezado de respuesta. En la Parte 2, la ruta se actualizó para responder un JSON válido con `application/json; charset=utf-8`.
 
 ### 3. Se corrigió la lectura de `datos.json`
 
@@ -70,7 +66,9 @@ Con el servidor encendido, se puede probar así:
 ```bash
 curl -i http://localhost:3000/
 curl -i http://localhost:3000/info
+curl -i http://localhost:3000/saludo
 curl -i http://localhost:3000/api/student
+curl -i http://localhost:3000/api/status
 curl -i http://localhost:3000/no-existe
 ```
 
@@ -82,10 +80,10 @@ curl -i http://localhost:3000/no-existe
 Servidor activo
 ```
 
-`/info` responde:
+`/info` responde un JSON:
 
-```txt
-Ruta de informacion
+```json
+{"mensaje":"Informacion del laboratorio","curso":"Sistemas y Tecnologias Web","tecnologia":"Node.js"}
 ```
 
 `/api/student` responde un JSON con los datos del archivo `datos.json`.
@@ -93,7 +91,7 @@ Ruta de informacion
 Una ruta que no existe responde:
 
 ```txt
-Ruta no encontrada
+Ruta no encontrada: /no-existe
 ```
 
 y usa el código HTTP `404`.
@@ -105,6 +103,55 @@ Después de levantar el servidor con `npm start`, se probó desde `curl`.
 El resultado fue:
 
 - `/` respondió `200 OK` y mostró `Servidor activo`.
-- `/info` respondió `200 OK` y mostró `Ruta de informacion`.
+- `/info` respondió `200 OK` y devolvió JSON con mensaje, curso y tecnología.
 - `/api/student` respondió `200 OK` y devolvió JSON desde `datos.json`.
-- `/no-existe` respondió `404 Not Found` y mostró `Ruta no encontrada`.
+- `/no-existe` respondió `404 Not Found` y mostró `Ruta no encontrada: /no-existe`.
+
+## Parte 2
+
+Después de dejar funcionando el servidor base, se agregaron los cambios pedidos en la segunda parte del laboratorio.
+
+### 1. `/info` ahora responde JSON
+
+La ruta `/info` ya no devuelve texto fijo. Ahora responde un objeto JSON con:
+
+- `mensaje`
+- `curso`
+- `tecnologia`
+
+### 2. Nueva ruta `/saludo`
+
+Se agregó la ruta `/saludo`, que responde texto plano:
+
+```txt
+Hola desde el servidor Node.js
+```
+
+### 3. Nueva ruta `/api/status`
+
+Se agregó la ruta `/api/status`, que responde JSON con:
+
+- `ok`
+- `status`
+- `puerto`
+
+### 4. Respuesta 404 con ruta visitada
+
+Cuando el usuario visita una ruta que no existe, el servidor responde `404` e incluye la ruta que intentó visitar.
+
+Ejemplo:
+
+```txt
+Ruta no encontrada: /no-existe
+```
+
+## Comprobación de la Parte 2
+
+Con el servidor encendido, se puede probar así:
+
+```bash
+curl -i http://localhost:3000/info
+curl -i http://localhost:3000/saludo
+curl -i http://localhost:3000/api/status
+curl -i http://localhost:3000/no-existe
+```
