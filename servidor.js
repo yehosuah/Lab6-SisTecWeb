@@ -24,7 +24,25 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === "/info") {
-      sendText(res, 200, "Ruta de informacion");
+      sendJson(res, 200, {
+        mensaje: "Informacion del laboratorio",
+        curso: "Sistemas y Tecnologias Web",
+        tecnologia: "Node.js"
+      });
+      return;
+    }
+
+    if (pathname === "/saludo") {
+      sendText(res, 200, "Hola desde el servidor Node.js");
+      return;
+    }
+
+    if (pathname === "/api/status") {
+      sendJson(res, 200, {
+        ok: true,
+        status: "activo",
+        puerto: Number(PORT)
+      });
       return;
     }
 
@@ -35,7 +53,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    sendText(res, 404, "Ruta no encontrada");
+    sendText(res, 404, `Ruta no encontrada: ${pathname}`);
   } catch (error) {
     sendJson(res, 500, {
       error: "Error interno del servidor",
