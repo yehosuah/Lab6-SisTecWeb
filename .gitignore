@@ -1,0 +1,6 @@
+node_modules/
+dist/
+calculadora-react/node_modules/
+calculadora-react/dist/
+calculadora-react/test-results/
+calculadora-react/playwright-report/

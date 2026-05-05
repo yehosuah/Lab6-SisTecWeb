@@ -1,67 +1,62 @@
-import http from "http";
 import fs from "fs/promises";
 import path from "path";
+import express from "express";
 
 const PORT = process.env.PORT ?? 3000;
+const app = express();
 
-const sendText = (res, statusCode, body) => {
-  res.writeHead(statusCode, { "Content-Type": "text/plain; charset=utf-8" });
-  res.end(body);
-};
+app.use(express.json());
 
-const sendJson = (res, statusCode, data) => {
-  res.writeHead(statusCode, { "Content-Type": "application/json; charset=utf-8" });
-  res.end(JSON.stringify(data));
-};
+app.get("/", (req, res) => {
+  res.type("text/plain").send("Servidor activo");
+});
 
-const server = http.createServer(async (req, res) => {
-  const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+app.get("/info", (req, res) => {
+  res.json({
+    mensaje: "Informacion del laboratorio",
+    curso: "Sistemas y Tecnologias Web",
+    tecnologia: "Express"
+  });
+});
 
+app.get("/saludo", (req, res) => {
+  res.type("text/plain").send("Hola desde el servidor Express");
+});
+
+app.get("/api/status", (req, res) => {
+  res.json({
+    ok: true,
+    status: "activo",
+    puerto: Number(PORT)
+  });
+});
+
+app.get("/api/student", async (req, res, next) => {
   try {
-    if (pathname === "/") {
-      sendText(res, 200, "Servidor activo");
-      return;
-    }
-
-    if (pathname === "/info") {
-      sendJson(res, 200, {
-        mensaje: "Informacion del laboratorio",
-        curso: "Sistemas y Tecnologias Web",
-        tecnologia: "Node.js"
-      });
-      return;
-    }
-
-    if (pathname === "/saludo") {
-      sendText(res, 200, "Hola desde el servidor Node.js");
-      return;
-    }
-
-    if (pathname === "/api/status") {
-      sendJson(res, 200, {
-        ok: true,
-        status: "activo",
-        puerto: Number(PORT)
-      });
-      return;
-    }
-
-    if (pathname === "/api/student") {
-      const filePath = path.join(process.cwd(), "datos.json");
-      const texto = await fs.readFile(filePath, "utf-8");
-      sendJson(res, 200, JSON.parse(texto));
-      return;
-    }
-
-    sendText(res, 404, `Ruta no encontrada: ${pathname}`);
+    const filePath = path.join(process.cwd(), "datos.json");
+    const texto = await fs.readFile(filePath, "utf-8");
+    res.json(JSON.parse(texto));
   } catch (error) {
-    sendJson(res, 500, {
-      error: "Error interno del servidor",
-      detalle: error.message
-    });
+    next(error);
   }
 });
 
-server.listen(PORT, () => {
+app.use((req, res) => {
+  res.status(404).type("text/plain").send(`Ruta no encontrada: ${req.path}`);
+});
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) {
+    next(error);
+    return;
+  }
+
+  res.status(500).json({
+    error: "Error interno del servidor",
+    detalle: error.message
+  });
+});
+
+app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

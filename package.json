@@ -1,12 +1,19 @@
 {
   "name": "lab6-sistecweb",
   "version": "1.0.0",
-  "description": "Laboratorio 6 de Sistemas y Tecnologias Web: servidor Node corregido.",
+  "description": "Laboratorio 7 de Sistemas y Tecnologias Web: Express y React.",
   "type": "module",
   "scripts": {
-    "start": "node servidor.js"
+    "start": "node servidor.js",
+    "check": "node --check servidor.js",
+    "client:dev": "npm --prefix calculadora-react run dev",
+    "client:build": "npm --prefix calculadora-react run build",
+    "client:test": "npm --prefix calculadora-react run test:e2e"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
