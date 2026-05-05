@@ -1,67 +1,55 @@
-# Lab6-SisTecWeb
+# Lab7-SisTecWeb
 
-Laboratorio de Node.js para Sistemas y Tecnologías Web.
+Laboratorio 7 de Sistemas y Tecnologías Web. Aquí dejé la parte de Express y la calculadora hecha con React + Vite.
 
-## Qué se hizo en la Parte 1
+## Parte 1: servidor con Express
 
-Se tomó el servidor malo que venía en `docs/servidor-malo (1).js` y se dejó una versión corregida en `servidor.js`.
+En el laboratorio anterior el servidor estaba hecho con la librería nativa `http` de Node.js. Para este laboratorio lo adapté a Express, manteniendo las rutas que ya funcionaban.
 
-El objetivo fue que las rutas originales funcionaran bien:
+### Diferencia entre `http` y Express
 
-- `/`
-- `/info`
-- `/api/student`
-- cualquier ruta que no exista
+Con `http` uno tiene que crear el servidor manualmente, revisar la URL, decidir el tipo de respuesta y manejar cada ruta con varios `if`. Funciona, pero el código crece rápido y se vuelve más repetitivo.
 
-## Cambios realizados
+Express ya trae una forma más ordenada de declarar rutas. Por ejemplo, se puede usar `app.get("/info", ...)` para decir exactamente qué pasa cuando alguien entra a `/info`. También facilita responder JSON con `res.json(...)`, devolver textos con `res.send(...)` y manejar errores sin escribir tanto código repetido.
 
-### 1. Se corrigió el cierre del servidor
+En resumen: `http` sirve para entender cómo funciona un servidor desde abajo, pero Express es más cómodo para crear APIs reales porque organiza mejor las rutas y las respuestas.
 
-El archivo original no cerraba bien la función de `http.createServer`. Por eso Node no podía levantar el servidor.
+### Rutas del servidor
 
-Ahora el servidor sí arranca correctamente con:
+El archivo principal es `servidor.js`.
+
+Rutas disponibles:
+
+- `/` responde `Servidor activo`.
+- `/info` responde JSON con información del laboratorio.
+- `/saludo` responde texto plano.
+- `/api/status` responde JSON con el estado del servidor.
+- `/api/student` responde los datos guardados en `datos.json`.
+- Cualquier ruta que no exista responde `404`.
+
+### Cómo correr el servidor
+
+Primero instalar dependencias:
+
+```bash
+npm install
+```
+
+Luego levantar el servidor:
 
 ```bash
 npm start
 ```
 
-### 2. Se corrigió el tipo de respuesta de `/info`
-
-El código tenía `application-json`, pero eso no es el tipo correcto.
-
-En la Parte 1 se corrigió el encabezado de respuesta. En la Parte 2, la ruta se actualizó para responder un JSON válido con `application/json; charset=utf-8`.
-
-### 3. Se corrigió la lectura de `datos.json`
-
-El código original llamaba `fs.readFile`, pero no esperaba el resultado con `await`. Eso hacía que la ruta `/api/student` devolviera algo incorrecto.
-
-Ahora sí lee el archivo, convierte el texto a JSON y responde datos reales.
-
-### 4. Se agregó `datos.json`
-
-La ruta `/api/student` necesitaba un archivo de datos. Se agregó `datos.json` con información simple para probar la API.
-
-### 5. Se corrigió la ruta no encontrada
-
-Antes cualquier ruta desconocida respondía con código `200`, aunque no existiera.
-
-Ahora responde con código `404`, que es lo correcto para una ruta no encontrada.
-
-## Cómo correrlo
-
-```bash
-npm start
-```
-
-El servidor queda en:
+Queda disponible en:
 
 ```txt
 http://localhost:3000
 ```
 
-## Cómo comprobarlo desde un cliente
+### Cómo probarlo
 
-Con el servidor encendido, se puede probar así:
+Con el servidor encendido:
 
 ```bash
 curl -i http://localhost:3000/
@@ -72,88 +60,75 @@ curl -i http://localhost:3000/api/status
 curl -i http://localhost:3000/no-existe
 ```
 
-## Resultado esperado
+## Parte 2: calculadora con React y Vite
 
-`/` responde:
+La calculadora está en la carpeta `calculadora-react`.
+
+Tiene una interfaz personalizada, no dejé el estilo básico del tutorial. Usé una pantalla oscura, botones grandes, colores propios y una estructura centrada para que se vea limpia en computadora y celular.
+
+Operaciones incluidas:
+
+- suma
+- resta
+- multiplicación
+- división
+
+También agregué botón de limpiar (`C`), borrar un dígito (`⌫`) y control para división entre cero.
+
+### Cómo correr la calculadora
+
+Desde la carpeta principal:
+
+```bash
+npm run client:dev
+```
+
+O entrando a la carpeta:
+
+```bash
+cd calculadora-react
+npm install
+npm run dev
+```
+
+Vite muestra la URL local en la terminal, normalmente:
 
 ```txt
-Servidor activo
+http://127.0.0.1:5173
 ```
 
-`/info` responde un JSON:
+### Cómo generar build
 
-```json
-{"mensaje":"Informacion del laboratorio","curso":"Sistemas y Tecnologias Web","tecnologia":"Node.js"}
+Desde la carpeta principal:
+
+```bash
+npm run client:build
 ```
 
-`/api/student` responde un JSON con los datos del archivo `datos.json`.
+### Prueba automática de la calculadora
 
-Una ruta que no existe responde:
+Con la calculadora encendida en `http://127.0.0.1:5173`, se puede correr:
 
-```txt
-Ruta no encontrada: /no-existe
+```bash
+npm run client:test
 ```
-
-y usa el código HTTP `404`.
 
 ## Pruebas realizadas
 
-Después de levantar el servidor con `npm start`, se probó desde `curl`.
-
-El resultado fue:
-
-- `/` respondió `200 OK` y mostró `Servidor activo`.
-- `/info` respondió `200 OK` y devolvió JSON con mensaje, curso y tecnología.
-- `/saludo` respondió `200 OK` y mostró `Hola desde el servidor Node.js`.
-- `/api/student` respondió `200 OK` y devolvió JSON desde `datos.json`.
-- `/api/status` respondió `200 OK` y devolvió JSON con `ok`, `status` y `puerto`.
-- `/no-existe` respondió `404 Not Found` y mostró `Ruta no encontrada: /no-existe`.
-
-## Parte 2
-
-Después de dejar funcionando el servidor base, se agregaron los cambios pedidos en la segunda parte del laboratorio.
-
-### 1. `/info` ahora responde JSON
-
-La ruta `/info` ya no devuelve texto fijo. Ahora responde un objeto JSON con:
-
-- `mensaje`
-- `curso`
-- `tecnologia`
-
-### 2. Nueva ruta `/saludo`
-
-Se agregó la ruta `/saludo`, que responde texto plano:
-
-```txt
-Hola desde el servidor Node.js
-```
-
-### 3. Nueva ruta `/api/status`
-
-Se agregó la ruta `/api/status`, que responde JSON con:
-
-- `ok`
-- `status`
-- `puerto`
-
-### 4. Respuesta 404 con ruta visitada
-
-Cuando el usuario visita una ruta que no existe, el servidor responde `404` e incluye la ruta que intentó visitar.
-
-Ejemplo:
-
-```txt
-Ruta no encontrada: /no-existe
-```
-
-## Comprobación de la Parte 2
-
-Con el servidor encendido, se puede probar así:
+Comandos usados para revisar la entrega:
 
 ```bash
-curl -i http://localhost:3000/info
-curl -i http://localhost:3000/saludo
-curl -i http://localhost:3000/api/status
-curl -i http://localhost:3000/no-existe
+npm run check
+npm start
+npm run client:build
+npm run client:test
 ```
+
+También se probaron las rutas del servidor con `curl` y la calculadora en navegador.
+
+## Videos de demostración
+
+Dejé dos videos en la carpeta `docs`:
+
+- `docs/lab7-express-demo.webm`
+- `docs/lab7-calculadora-demo.webm`
